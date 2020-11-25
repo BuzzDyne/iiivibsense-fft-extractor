@@ -1,1 +1,1 @@
-# iiiVibsense-FFT-extractor
+# iiivibsense-fft-extractor
