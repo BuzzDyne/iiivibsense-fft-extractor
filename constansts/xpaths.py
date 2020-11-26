@@ -1,3 +1,7 @@
+# Page Structure
+# Company > Organization > Factory > ProdLine > Machine > Sensor
+#               APP      Serang Mill    PM2    Size Press    
+
 PAGE_HEADER = "/html/body/div[1]/div/div[3]/div/div/div/div[1]/h4"
 MENU_ITEMS = "//h6/a"
 
