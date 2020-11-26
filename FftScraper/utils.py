@@ -1,12 +1,16 @@
 from datetime import datetime
+import re
 
-def convStrToTime(timeStr):
+def convWebTimeStrToDatetime(timeStr):
     return datetime.strptime(timeStr,"%d %b %Y, %H:%M")
 
-def convTimeToStr(dateT, mode = 0):
-    # 0 = Time only
-    # 1 = Date Only
-    if mode == 0:
-        return datetime.strftime(dateT,"%H_%M_%S")
-    elif mode == 1:
-        return datetime.strftime(dateT,"%Y%b%d")
+def convInputStrToDatetime(timeStr):
+    return datetime.strptime(timeStr,"%Y-%m-%d %H:%M:%S")
+
+def convTimeToStr(dateT):
+    return datetime.strftime(dateT,"%Y-%m-%d_%H-%M-%S")
+
+def cleanseStr(x):
+    x = x.replace(' ', "_")
+    # x = re.sub(r'/[^\w-]/', '',x)
+    return x
