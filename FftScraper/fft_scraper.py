@@ -9,12 +9,12 @@ from selenium.webdriver.common.by import By
 
 from constansts import xpaths as Paths
 from FftScraper import utils
-from job_model import Job
+from FftScraper.job_model import Job
 
 uname = "gimin@iii.co.id"
 pw = "eiy0eiqu9Bai"
 
-dataTargetDir = "data"
+dataTargetDir = "data/png"
 
 class FFTScraperManual:
     ######### UTIL METHODS #########
@@ -259,7 +259,11 @@ class FFTScraper:
             sensorName = str.split(sensorNameEle.text, sep="Vibration data for sensor ")[1]
             sensorName = utils.cleanseStr(sensorName)
 
+            print(f'Scraping {sensorName}', end='')
+
             earlyTime   = self.job.earlyTime
+
+            counter = 0
 
             while currTime > earlyTime:
                 # Scrape FFT
@@ -276,9 +280,14 @@ class FFTScraper:
                 
                 chartEle.screenshot('{}/{}.png'.format(dirName, fileName))
 
+                print('.', end='')
+                counter = counter + 1
+
                 self.sensorPageNextDatarow()
                 self.waitForElementToLoad(Paths.SENSOR_PAGE_CHART_CONTAINER) 
                 currTime = utils.convWebTimeStrToDatetime(self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text)
+
+            print(f' ({counter})\n', end='')
 
         # Inside MachinePage
         sensorItems = self.driver.find_elements_by_xpath(Paths.MACHINE_MENU_ITEMS)
