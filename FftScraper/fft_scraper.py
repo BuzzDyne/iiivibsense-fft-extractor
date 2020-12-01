@@ -311,10 +311,14 @@ class FFTScraper:
             navigateToLatestDatarow()
             navigateAndScrapeToEarliestDatarow()
 
-    def __init__(self, job):
+    def __init__(self, username, password, job, headless):
         # Browser Window Size
         opt = webdriver.ChromeOptions()
         opt.add_argument("--window-size=1200,800")
+        
+        if(headless):
+            opt.add_argument('--headless')
+            opt.headless = True
 
         # Create 'data' dir if doesn't exist
         utils.safeCreateDir(dataTargetDir)
@@ -323,9 +327,13 @@ class FFTScraper:
         self.waitDriver         = WebDriverWait(self.driver,10)
         self.job                = job
 
+        uname = username
+        pw = password
+
         self.navigateToMachinePage()
 
         self.scrapeSensorData()
 
+        self.driver.quit()
 
 # sc = FFTScraperManual(uname, pw)
