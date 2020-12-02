@@ -10,6 +10,7 @@ MACHINE_MENU_ITEMS = "(//table)[1]/tbody/tr/td[2]/a"
 SENSOR_PAGE_CHART_CONTAINER = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[3]/div[1]/div"
 SENSOR_PAGE_TS                  = "//div/span/span[2]"
 SENSOR_PAGE_TS_ABS          = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[3]/div[1]/div/div/span/span[2]"
+SENSOR_PAGE_FAULTS_CONTAINER = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[2]/div[2]/div/div/div"
 
 SENSOR_PAGE_XYZ             = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[2]/div[1]/div/div[1]"
 SENSOR_PAGE_SENSOR_NAME     = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[3]/div[1]/div/div[1]/h4"

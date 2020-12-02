@@ -210,18 +210,6 @@ class FFTScraper:
 
         def menuPage(opts, choice):
             """Click one of current page option and return the options of the next page"""
-            # if(len(opts) == 0):
-            #     # Reached Machine page
-            #     self.waitForElementToLoad(Paths.PAGE_HEADER)
-            #     return
-
-            # print("\nPlease choose 1 item from list below:")
-            # i = 1
-            # for x in opts:
-            #     print("{} = {}\n".format(i, x.text), end='')
-            #     i += 1
-
-            # n = int(input("Input selection number: "))
             choice = choice - 1
 
             choiceName = opts[choice].text
@@ -255,30 +243,31 @@ class FFTScraper:
         def navigateAndScrapeToEarliestDatarow():
             currTime = utils.convWebTimeStrToDatetime(self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text)
 
+            # Get Sensor Name
             sensorNameEle = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_SENSOR_NAME)
             sensorName = str.split(sensorNameEle.text, sep="Vibration data for sensor ")[1]
             sensorName = utils.cleanseStr(sensorName)
-
             print(f'Scraping {sensorName}', end='')
 
             earlyTime   = self.job.earlyTime
-
             counter = 0
 
             while currTime > earlyTime:
-                # Scrape FFT
                 chartEle    = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_CHART_CONTAINER) 
                 xyzEle      = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_XYZ)
-
-                # Scroll Down (or else the screenshot will be cut)
-                self.driver.execute_script("arguments[0].scrollIntoView(true);", xyzEle)
+                faultEle    = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_FAULTS_CONTAINER)
 
                 fileName = utils.convTimeToStr(currTime)
-
-                dirName = "{}/{}".format(dataTargetDir,sensorName)
+                dirName = f"{dataTargetDir}/{sensorName}"
                 utils.safeCreateDir(dirName)
-                
-                chartEle.screenshot('{}/{}.png'.format(dirName, fileName))
+
+                # Scrape Faults box
+                faultEle.screenshot(f'{dirName}/{fileName}_0_faults.png')
+
+                # Scrape FFT Chart
+                #       Scroll Down (or else the screenshot will be cut)
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", xyzEle)
+                chartEle.screenshot(f'{dirName}/{fileName}.png')
 
                 print('.', end='')
                 counter = counter + 1

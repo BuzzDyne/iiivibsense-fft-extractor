@@ -5,6 +5,7 @@ from os.path import isfile, join
 from PIL import Image
 
 from constansts import data_paths as DP
+from PdfCombiner.image_set_model import ImageSet
 
 class PDFCombiner:
     # Get all image directories
@@ -23,23 +24,46 @@ class PDFCombiner:
             return f"{y[0]}_{y[1]}"
 
         def combineImgs(listOfImgPaths, targetFileName):
-            listOfImg = []
+            fftImgRegex = r'([0-9]+)-([0-9]+)-([0-9]+)_([0-9]+)-([0-9]+)-([0-9]+).png'
+
+            listOfImgSets = []
+            
+            # Get Reference to all
             for imgPath in listOfImgPaths:
-                listOfImg.append(Image.open(imgPath))
+                if(re.search(fftImgRegex, imgPath) is not None): #is FFT Image
+                    fftImg = Image.open(imgPath)
+
+                    # try finding fft's faultImg
+                    faultPath = imgPath[:-4] + '_0_faults.png'
+                    try:
+                        faultImg = Image.open(faultPath)
+                    except FileNotFoundError:
+                        faultImg = None
+                        print(f"{targetFileName}'s faultImg is not found'")
+                    
+                    listOfImgSets.append(ImageSet(fftImg, faultImg))
             
             # Get Max Width and Height
-            listOfMeasurements = [x.size for x in listOfImg]
-            maxWidth    = max([x[0] for x in listOfMeasurements])
-            maxHeight   = max([x[1] for x in listOfMeasurements])
+            #       MaxHeight, fftMaxWidth, faultMaxWidth
+            maxHeight       = max([i.getMaxHeight() for i in listOfImgSets])
+            fftMaxWidth     = max([i.getFftWidth() for i in listOfImgSets])
+            faultMaxWidth   = max([i.getFaultsWidth() for i in listOfImgSets if i.getFaultsWidth() is not None])
 
             # Create Canvas
-            new_image = Image.new('RGB', (maxWidth, maxHeight*len(listOfImg)))
+            new_image = Image.new('RGB', (fftMaxWidth+faultMaxWidth, maxHeight*len(listOfImgSets)))
 
             # Put Images
             i=0
-            for img in listOfImg:
-                new_image.paste(img, (0, maxHeight*i))
+            for imgSet in listOfImgSets:
+                new_image.paste(imgSet.fftImg, (0, maxHeight*i))
+                if(imgSet.faultImg is not None):
+                    new_image.paste(imgSet.faultImg, (fftMaxWidth, maxHeight*i))
                 i = i+1
+
+            # i=0
+            # for img in listOfImg:
+            #     new_image.paste(img, (0, maxHeight*i))
+            #     i = i+1
 
             # Save img
             targetFileName = targetFileName[:-3] + 'pdf'
@@ -68,7 +92,7 @@ class PDFCombiner:
             listOfImgs = []
             for f in os.listdir(directory):
                 listOfImgs.append(f'{directory}/{f}')
-            combineImgs(listOfImgs, cleanseStrForPDFName(listOfImgs[-1]))
+            combineImgs(listOfImgs, cleanseStrForPDFName(listOfImgs[-2]))
             print("Done!\n", end='')
 
             # Dir processed, archiving
