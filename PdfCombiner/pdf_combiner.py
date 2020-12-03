@@ -44,7 +44,6 @@ class PDFCombiner:
                     listOfImgSets.append(ImageSet(fftImg, faultImg))
             
             # Get Max Width and Height
-            #       MaxHeight, fftMaxWidth, faultMaxWidth
             maxHeight       = max([i.getMaxHeight() for i in listOfImgSets])
             fftMaxWidth     = max([i.getFftWidth() for i in listOfImgSets])
             faultMaxWidth   = max([i.getFaultsWidth() for i in listOfImgSets if i.getFaultsWidth() is not None])
@@ -60,14 +59,17 @@ class PDFCombiner:
                     new_image.paste(imgSet.faultImg, (fftMaxWidth, maxHeight*i))
                 i = i+1
 
-            # i=0
-            # for img in listOfImg:
-            #     new_image.paste(img, (0, maxHeight*i))
-            #     i = i+1
-
             # Save img
             targetFileName = targetFileName[:-3] + 'pdf'
-            new_image.save(f'{DP.PDF_TARGET_DIR_PATH}/{targetFileName}')
+            targetFullPath = f'{DP.PDF_TARGET_DIR_PATH}/{targetFileName}'
+            print()
+
+            i=0
+            while(os.path.isfile(targetFullPath)):
+                i = i+1
+                targetFullPath = f'{targetFullPath[:-4]}_{i}.pdf'
+
+            new_image.save(targetFullPath)
 
         def archiveDir(sourceDir):
             dirName = sourceDir.split('/')[-1]
@@ -78,7 +80,10 @@ class PDFCombiner:
                 # Delete sourceDir
                 file_names = os.listdir(sourceDir)
                 for f in file_names:
-                    shutil.move(f'{sourceDir}/{f}', targetDir)
+                    try:
+                        shutil.move(f'{sourceDir}/{f}', targetDir)
+                    except shutil.Error : # File already exists at dest
+                        os.remove(f'{sourceDir}/{f}')
                 os.rmdir(sourceDir)
             else:                           # Folder doesn't exist yet
                 # Move sourceDir
