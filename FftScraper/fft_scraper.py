@@ -325,4 +325,88 @@ class FFTScraper:
 
         self.driver.quit()
 
+class FFTScraperIndividual:
+    ######### UTIL METHODS #########
+    def waitForElementToLoad(self, ele):
+        if(isinstance(ele, str)):
+            self.waitDriver.until(EC.presence_of_element_located((By.XPATH, ele)))
+
+    def login(self):
+        self.driver.get("https://iii.vibsense.net/login/")
+
+        e = self.driver.find_element_by_name("email")
+        e.clear()
+        e.send_keys(uname)
+
+        e = self.driver.find_element_by_name("password")
+        e.clear()
+        e.send_keys(pw)
+
+        e.send_keys(Keys.RETURN)
+        self.waitForElementToLoad(Paths.PAGE_HEADER)
+
+        # Pick Company
+        opts = self.driver.find_elements_by_xpath(Paths.MENU_ITEMS)
+        opts[0].click()
+        self.waitForElementToLoad(Paths.PAGE_HEADER)
+
+    def scrapePage(self, url):
+        # Go to URL
+        self.driver.get(url)
+        self.waitForElementToLoad(Paths.SENSOR_PAGE_CHART_CONTAINER)
+
+        # Get Curr Time
+        currTimeText = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text
+        currTime = utils.convWebTimeStrToDatetime(currTimeText)
+
+        # Get Sensor Name
+        sensorNameEle = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_SENSOR_NAME)
+        sensorName = str.split(sensorNameEle.text, sep="Vibration data for sensor ")[1]
+        sensorName = utils.cleanseStr(sensorName)
+        print(f'Scraping {sensorName} at {currTime}... ', end='')
+
+        # Start Scraping
+        chartEle    = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_CHART_CONTAINER) 
+        xyzEle      = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_XYZ)
+        faultEle    = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_FAULTS_CONTAINER)
+
+        fileName = utils.convTimeToStr(currTime)
+        dirName = f"{dataTargetDir}/{sensorName}"
+        utils.safeCreateDir(dirName)
+
+        # Scrape Faults box
+        faultEle.screenshot(f'{dirName}/{fileName}_0_faults.png')
+
+        # Scrape FFT Chart
+        #       Scroll Down (or else the screenshot will be cut)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", xyzEle)
+        chartEle.screenshot(f'{dirName}/{fileName}.png')
+
+        print('DONE!')
+
+    def __init__(self, urls, username=uname, password=pw, headless=False):
+        # Browser Window Size
+        opt = webdriver.ChromeOptions()
+        opt.add_argument("--window-size=1200,800")
+        
+        if(headless):
+            opt.add_argument('--headless')
+            opt.headless = True
+
+        # Create 'data' dir if doesn't exist
+        utils.safeCreateDir(dataTargetDir)
+        self.driver             = webdriver.Chrome(chrome_options=opt)
+        self.waitDriver         = WebDriverWait(self.driver,10)
+
+        self.login()
+        for url in urls:
+            self.scrapePage(url)
+
+
+
+
+
+
+
+
 # sc = FFTScraperManual(uname, pw)
