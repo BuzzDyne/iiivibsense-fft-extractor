@@ -104,12 +104,14 @@ class PDFCombiner:
             print(f"Archiving {fName}... ", end='')
             archiveDir(directory)
             print("Done!\n", end='')
-            
-
-
 
     def __init__(self):
         self.sensorDirs = self.getImgDirectories()
 
         self.processSensorDirs()
     
+
+class SinglePDFCombiner:
+
+    def __init__(self):
+        super().__init__

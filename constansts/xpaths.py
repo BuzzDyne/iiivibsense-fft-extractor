@@ -17,3 +17,6 @@ SENSOR_PAGE_SENSOR_NAME     = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[
 
 SENSOR_PAGE_DATA_TABLE      = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[4]/div[1]/div/div[2]/div/table/tbody"
 SENSOR_PAGE_DATA_TABLE_ROW      = "//tr/td/a"
+
+SENSOR_PAGE_PEAKRMS_ROW     = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[2]"
+SENSOR_PAGE_GRAPH_ROW       = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[3]"

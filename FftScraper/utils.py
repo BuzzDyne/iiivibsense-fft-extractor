@@ -12,6 +12,9 @@ def convInputStrToDatetime(timeStr):
 def convTimeToStr(dateT):
     return datetime.strftime(dateT,"%Y-%m-%d_%H-%M-%S")
 
+def convTimeToMonthYearStr(dateT):
+    return datetime.strftime(dateT,"%Y-%m")
+
 def getCurrDateStr():
     return datetime.strftime(datetime.now(), "%Y-%m-%d")
 

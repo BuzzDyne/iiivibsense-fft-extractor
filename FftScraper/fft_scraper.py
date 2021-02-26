@@ -332,6 +332,7 @@ class FFTScraperIndividual:
             self.waitDriver.until(EC.presence_of_element_located((By.XPATH, ele)))
 
     def login(self):
+        print("Logging in", end="")
         self.driver.get("https://iii.vibsense.net/login/")
 
         e = self.driver.find_element_by_name("email")
@@ -344,45 +345,56 @@ class FFTScraperIndividual:
 
         e.send_keys(Keys.RETURN)
         self.waitForElementToLoad(Paths.PAGE_HEADER)
+        print("... ", end="")
 
         # Pick Company
         opts = self.driver.find_elements_by_xpath(Paths.MENU_ITEMS)
         opts[0].click()
         self.waitForElementToLoad(Paths.PAGE_HEADER)
+        print("DONE!")
 
-    def scrapePage(self, url):
-        # Go to URL
-        self.driver.get(url)
-        self.waitForElementToLoad(Paths.SENSOR_PAGE_CHART_CONTAINER)
+    def scrapePages(self, urls):
+        listOfCode = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-        # Get Curr Time
-        currTimeText = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text
-        currTime = utils.convWebTimeStrToDatetime(currTimeText)
+        def scrapePage(url, code):
+            # Go to URL
+            self.driver.get(url)
+            self.waitForElementToLoad(Paths.SENSOR_PAGE_CHART_CONTAINER)
 
-        # Get Sensor Name
-        sensorNameEle = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_SENSOR_NAME)
-        sensorName = str.split(sensorNameEle.text, sep="Vibration data for sensor ")[1]
-        sensorName = utils.cleanseStr(sensorName)
-        print(f'Scraping {sensorName} at {currTime}... ', end='')
+            # Get Curr Time
+            currTimeText = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text
+            currTime = utils.convWebTimeStrToDatetime(currTimeText)
 
-        # Start Scraping
-        chartEle    = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_CHART_CONTAINER) 
-        xyzEle      = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_XYZ)
-        faultEle    = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_FAULTS_CONTAINER)
+            # Get Sensor Name
+            sensorNameEle = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_SENSOR_NAME)
+            sensorName = str.split(sensorNameEle.text, sep="Vibration data for sensor ")[1]
+            sensorName = utils.cleanseStr(sensorName)
+            print(f'Scraping {sensorName} at {currTime}... ', end='')
 
-        fileName = utils.convTimeToStr(currTime)
-        dirName = f"{dataTargetDir}/{sensorName}"
-        utils.safeCreateDir(dirName)
+            # Start Scraping
+            xyzEle      = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_XYZ)
 
-        # Scrape Faults box
-        faultEle.screenshot(f'{dirName}/{fileName}_0_faults.png')
+            peakRmsRowEle   = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_PEAKRMS_ROW)
+            graphRowEle     = self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_GRAPH_ROW)
 
-        # Scrape FFT Chart
-        #       Scroll Down (or else the screenshot will be cut)
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", xyzEle)
-        chartEle.screenshot(f'{dirName}/{fileName}.png')
+            fileName = utils.convTimeToMonthYearStr(currTime)
+            dirName = f"{dataTargetDir}/{sensorName}"
+            utils.safeCreateDir(dirName)
 
-        print('DONE!')
+            # Scrape First Row
+            peakRmsRowEle.screenshot(f'{dirName}/{fileName}_{code}_rms.png')
+
+            # Scrape FFT Row
+            #       Scroll Down (or else the screenshot will be cut, not needed if headless)
+            # self.driver.execute_script("arguments[0].scrollIntoView(true);", xyzEle)
+            graphRowEle.screenshot(f'{dirName}/{fileName}_{code}_fft.png')
+
+            print('DONE!')
+        
+        i = 0
+        for url in urls:
+            scrapePage(url, listOfCode[i])
+            i+=1
 
     def __init__(self, urls, username=uname, password=pw, headless=False):
         # Browser Window Size
@@ -399,8 +411,7 @@ class FFTScraperIndividual:
         self.waitDriver         = WebDriverWait(self.driver,10)
 
         self.login()
-        for url in urls:
-            self.scrapePage(url)
+        self.scrapePages(urls)
 
 
 

@@ -12,14 +12,47 @@ pw = "eiy0eiqu9Bai"
 
 runHeadless = False
 
-urls = [
-    "https://iii.vibsense.net/dashboard/sensor/ckalw4t6d2c740944fywwmwr5/",
-    "https://iii.vibsense.net/dashboard/sensor/ckalw4t6d2c740944fywwmwr5/2020-12-02T12:11:00.000Z/",
-    "https://iii.vibsense.net/dashboard/sensor/ckalw4ta62c840944wkp5u344/18-Feb-2021%2012:23/",
-    "https://iii.vibsense.net/dashboard/sensor/ckalw4tdu2ca40944l65trwnc/2020-09-10T11:30:31.000Z/"
-]
+# urls = [
+    #     link, A = tgl1  00"
+    #     link, B = tgl1  23"
+    #     link, C = tgl7  23"
+    #     link, D = tgl31 23"
+    #     link, E = PeakRMS1
+    #     link, F = PeakRMS2
+    #     link, G = PeakRMS3
+    #     link, H = PeakRMS4
+    # ]
 
-FFTScraperIndividual(urls)
+# urls = [
+#     "", #A tgl1  00"
+#     "", #B tgl1  23"
+#     "", #C tgl7  23"
+#     "", #D tgl31 23"
+#     "", #E = PeakRMS1
+#     "", #F = PeakRMS2
+#     "", #G = PeakRMS3
+#     "" #H = PeakRMS4
+# ]
+
+# sptb_1 = [
+#     "https://iii.vibsense.net/dashboard/sensor/ckdzkro0qk2310944vn6wdduj/2021-02-03T11:18:55.000Z/", #A tgl1  00"
+#     "https://iii.vibsense.net/dashboard/sensor/ckdzkro0qk2310944vn6wdduj/2021-02-03T15:22:53.000Z/", #B tgl1  23"
+#     "https://iii.vibsense.net/dashboard/sensor/ckdzkro0qk2310944vn6wdduj/2021-02-10T15:15:32.000Z/", #C tgl7  23"
+#     "https://iii.vibsense.net/dashboard/sensor/ckdzkro0qk2310944vn6wdduj/2021-02-18T10:37:47.000Z/", #D tgl31 23"
+# ]
+# sptb_2 = [
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-19T06:59:46.000Z/", #A tgl1  00"
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-19T15:58:31.000Z/", #B tgl1  23"
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-23T15:57:59.000Z/", #C tgl7  23"
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-26T01:19:54.000Z/", #D tgl31 23"
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-23T15:24:14.000Z/", #E = PeakRMS1
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-22T15:00:16.000Z/", #F = PeakRMS2
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-21T15:01:29.000Z/", #G = PeakRMS3
+#     "https://iii.vibsense.net/dashboard/sensor/ckalw4teb2cad0944hq7iwz81/2020-08-19T14:51:02.000Z/" #H = PeakRMS4
+# ]
+
+# FFTScraperIndividual(sptb_1, headless=True)
+# FFTScraperIndividual(sptb_2, headless=True)
 
 
 # Default Program
