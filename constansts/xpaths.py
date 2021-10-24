@@ -20,3 +20,5 @@ SENSOR_PAGE_DATA_TABLE_ROW      = "//tr/td/a"
 
 SENSOR_PAGE_PEAKRMS_ROW     = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[2]"
 SENSOR_PAGE_GRAPH_ROW       = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[3]"
+
+SENSOR_PAGE_TIMESTAMPS      = "/html/body/div[1]/div/div[3]/div/main/div[1]/div[4]/div[1]/div/div[2]/div/table/tbody/tr/td[1]/a"

@@ -230,6 +230,14 @@ class FFTScraper:
             opts = menuPage(opts, choice)
 
     def scrapeSensorData(self):
+        def processTsRows(latestTime, tsElements):
+            for ts in tsElements:
+                currTime = utils.convWebTimeStrToDatetime(ts.text)
+                if(currTime <= latestTime):
+                    return ts
+            
+            return tsElements[len(tsElements)-1]
+
 
         def navigateToLatestDatarow():
             latestTime  = self.job.latestTime
@@ -239,6 +247,21 @@ class FFTScraper:
                 # Go to next DataRow
                 self.sensorPageNextDatarow()
                 currTime = utils.convWebTimeStrToDatetime(self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text)
+
+        def navigateToLatestDatarowV2():
+            latestTime = self.job.latestTime
+
+            currTime = utils.convWebTimeStrToDatetime(self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text)
+            
+            while(currTime > latestTime):
+                tsElements = self.driver.find_elements_by_xpath(Paths.SENSOR_PAGE_TIMESTAMPS)
+
+                resEle = processTsRows(latestTime, tsElements)
+                resEle.click()
+                self.waitForElementToLoad(Paths.SENSOR_PAGE_CHART_CONTAINER)
+
+                currTime = utils.convWebTimeStrToDatetime(self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text)
+
 
         def navigateAndScrapeToEarliestDatarow():
             currTime = utils.convWebTimeStrToDatetime(self.driver.find_element_by_xpath(Paths.SENSOR_PAGE_TS_ABS).text)
@@ -297,7 +320,9 @@ class FFTScraper:
             self.driver.get(sensorLinks[i])
             self.waitForElementToLoad(Paths.SENSOR_PAGE_CHART_CONTAINER)
             
-            navigateToLatestDatarow()
+            # navigateToLatestDatarow()
+            # Todo
+            navigateToLatestDatarowV2()
             navigateAndScrapeToEarliestDatarow()
 
     def __init__(self, username, password, job, headless):
